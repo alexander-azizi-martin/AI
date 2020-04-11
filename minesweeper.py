@@ -231,6 +231,14 @@ class MinesweeperAI():
                 if mine_cell not in self.mines:
                     self.mark_mine(mine_cell)
 
+            # Tries to infer a sentence
+            if new_sentence.cells.issubset(sentence.cells):
+                inferred_sentence = Sentence(sentence.cells.difference(new_sentence.cells),
+                                             abs(new_sentence.count - sentence.count))
+
+                if inferred_sentence not in self.knowledge:
+                    self.knowledge.append(inferred_sentence)
+
     def make_safe_move(self):
         """
         Returns a safe cell to choose on the Minesweeper board.
@@ -254,7 +262,7 @@ class MinesweeperAI():
             2) are not known to be mines
         """
         # Iterates until it fins a random cell that is not a mine or picked
-        for i in range(self.height * self.width):
+        for i in range(self.height * self.width - len(self.moves_made)):
             i = random.randrange(self.height)
             j = random.randrange(self.width)
 
