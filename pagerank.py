@@ -57,7 +57,21 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
+    distribution = {}
+
+    if len(corpus[page]) == 0:
+        for key in corpus:
+            distribution[key] = 1 / len(corpus)
+
+        return distribution
+
+    for key in corpus:
+        distribution[key] = (1 - damping_factor) / len(corpus)
+
+        if key in corpus[page]:
+            distribution[key] += damping_factor / len(corpus[page])
+
+    return distribution
 
 
 def sample_pagerank(corpus, damping_factor, n):
@@ -69,7 +83,19 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    page_ranks = {page: 0 for page in corpus}
+    current_page = random.choice(list(corpus.keys()))
+    step = 1 / n
+
+    for i in range(n):
+        page_ranks[current_page] += step
+        transition = transition_model(corpus, current_page, damping_factor)
+        current_page = random.choices(
+            list(transition.keys()), list(transition.values()))[0]
+
+    print(sum(page_ranks.values()))
+
+    return page_ranks
 
 
 def iterate_pagerank(corpus, damping_factor):
@@ -81,7 +107,46 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    page_ranks = {key: 1 / len(corpus) for key in corpus}
+    difference = False
+
+    while not difference:
+        for page in page_ranks:
+            new_page_rank = (1 - damping_factor) / len(corpus)
+            links = get_links(page, corpus)
+
+            for link in links:
+                new_page_rank += damping_factor * \
+                    (page_ranks[link] / len(corpus[link]))
+
+            # new_page_rank *= damping_factor
+
+            # if len(corpus[page]) == 0:
+            #     new_page_rank += damping_factor / len(corpus)
+
+            if abs(page_ranks[page] - new_page_rank) < 0.001 :
+                difference = True
+            else:
+                difference = False
+
+            page_ranks[page] = new_page_rank
+
+    print(sum(page_ranks.values()))
+
+    return page_ranks
+
+
+def get_links(page, corpus):
+    """
+    Return a list of pages that link to page.
+    """
+    links = []
+
+    for key in corpus:
+        if page in corpus[key]:
+            links.append(key)
+
+    return links
 
 
 if __name__ == "__main__":
