@@ -93,8 +93,6 @@ def sample_pagerank(corpus, damping_factor, n):
         current_page = random.choices(
             list(transition.keys()), list(transition.values()))[0]
 
-    print(sum(page_ranks.values()))
-
     return page_ranks
 
 
@@ -107,33 +105,25 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    page_ranks = {key: 1 / len(corpus) for key in corpus}
-    difference = False
+    old_page_ranks = {}
+    new_page_ranks = {page: 1 / len(corpus) for page in corpus}
 
-    while not difference:
-        for page in page_ranks:
-            new_page_rank = (1 - damping_factor) / len(corpus)
-            links = get_links(page, corpus)
+    while not converged(old_page_ranks, new_page_ranks):
+        old_page_ranks = new_page_ranks
+        new_page_ranks = {page: 0 for page in corpus}
 
-            for link in links:
-                new_page_rank += damping_factor * \
-                    (page_ranks[link] / len(corpus[link]))
+        for page in old_page_ranks:
+            new_page_ranks[page] += (1 - damping_factor) / len(corpus)
 
-            # new_page_rank *= damping_factor
+            for link in get_links(page, corpus):
+                if len(corpus[link]) == 0:
+                    new_page_ranks[page] += damping_factor * \
+                        (old_page_ranks[link] / len(corpus))
+                else:
+                    new_page_ranks[page] += damping_factor * \
+                        (old_page_ranks[link] / len(corpus[link]))
 
-            # if len(corpus[page]) == 0:
-            #     new_page_rank += damping_factor / len(corpus)
-
-            if abs(page_ranks[page] - new_page_rank) < 0.001 :
-                difference = True
-            else:
-                difference = False
-
-            page_ranks[page] = new_page_rank
-
-    print(sum(page_ranks.values()))
-
-    return page_ranks
+    return new_page_ranks
 
 
 def get_links(page, corpus):
@@ -143,10 +133,24 @@ def get_links(page, corpus):
     links = []
 
     for key in corpus:
-        if page in corpus[key]:
+        if page in corpus[key] or len(corpus[key]) == 0:
             links.append(key)
 
     return links
+
+
+def converged(old, new):
+    """
+    Return wether of not the page ranks have converged.
+    """
+    if len(old) == 0 or len(new) == 0:
+        return False
+
+    for page in new:
+        if abs(new[page] - old.get(page, 0)) > 0.001:
+            return False
+
+    return True
 
 
 if __name__ == "__main__":
