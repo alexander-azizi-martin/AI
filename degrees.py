@@ -1,5 +1,6 @@
 import csv
 import sys
+from queue import Queue
 
 from util import Node, StackFrontier, QueueFrontier
 
@@ -91,32 +92,33 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    frontier = QueueFrontier()
+    frontier = Queue()
     explored = set()
 
     # Initial state
-    frontier.add(Node(source, None, None))
+    frontier.put(Node(source, None, None))
+    explored.add(source)
 
     # Looks for path from source to target
     while not frontier.empty():
-        node = frontier.remove()
+        node = frontier.get()
 
         # Checks goal state
         if node.state == target:
             return construct_path(node)
 
-        explored.add(node.state)
-
         # Explores neighbor nodes
         for movie_id, person_id in neighbors_for_person(node.state):
-            if not frontier.contains_state(person_id) and person_id not in explored:
-                child = Node(person_id, node, movie_id)
+            child = Node(person_id, node, movie_id)
 
-                # Checks goal state
-                if child.state == target:
-                    return construct_path(child)
+            # Checks goal state
+            if child.state == target:
+                return construct_path(child)
 
-                frontier.add(child)
+            # Adds node to frontier if it has not been explored
+            if person_id not in explored:
+                frontier.put(child)
+                explored.add(child.state)
 
     return None
 
