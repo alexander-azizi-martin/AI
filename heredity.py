@@ -40,10 +40,10 @@ PROBS = {
 
 def main():
     #Check for proper usage
-    if len(sys.argv) != 2:
-        sys.exit("Usage: python heredity.py data.csv")
-    people = load_data(sys.argv[1])
-    #people = load_data("C:/Programming/CS50AI/data/family0.csv")
+    # if len(sys.argv) != 2:
+    #     sys.exit("Usage: python heredity.py data.csv")
+    # people = load_data(sys.argv[1])
+    people = load_data("C:/Programming/CS50AI/data/family0.csv")
 
     # Keep track of gene and trait probabilities for each person
     probabilities = {
@@ -142,8 +142,6 @@ def joint_probability(people, one_gene, two_genes, have_trait):
     """
     # Joint probability 
     probability = 1
-    # Dictionary mapping a person's name to their probability
-    probs = {person_name: 1 for person_name in people.keys()}
 
     # Calculates proability of everyone in people
     for person in people:
@@ -156,11 +154,8 @@ def joint_probability(people, one_gene, two_genes, have_trait):
 
         # Calculates probability for a parent
         if people[person]["father"] == None or people[person]["mother"] == None:
-            probs[person] *= PROBS["gene"][num_genes]
-            probs[person] *= PROBS["trait"][num_genes][person in have_trait]
-
-            # Adds to the joint probability
-            probability *= probs[person]
+            probability *= PROBS["gene"][num_genes]
+            probability *= PROBS["trait"][num_genes][person in have_trait]
 
         # Calculates the probability of a child
         else:
@@ -182,17 +177,13 @@ def joint_probability(people, one_gene, two_genes, have_trait):
 
             # Calculates the probability of the child receiving num_genes genes
             if num_genes == 2:
-                probs[person] *= mom_prob * dad_prob
+                probability *= mom_prob * dad_prob 
             elif num_genes == 1:
-                probs[person] *= ((1 - mom_prob) * dad_prob) + \
-                    ((1 - dad_prob) * mom_prob) 
+                probability *= ((1 - mom_prob) * dad_prob) + ((1 - dad_prob) * mom_prob)
             else:
-                probs[person] *= (1 - mom_prob) * (1 - dad_prob)
+                probability *= (1 - mom_prob) * (1 - dad_prob)
 
-            probs[person] *= PROBS["trait"][num_genes][person in have_trait]
-
-            # Adds to the joint probability
-            probability *= probs[person]
+            probability *= PROBS["trait"][num_genes][person in have_trait]
 
     return probability
 
@@ -247,4 +238,4 @@ if __name__ == "__main__":
     # def joint_probability(people, one_gene, two_genes, have_trait):
     #print(joint_probability(people, {"Harry"}, {"James"}, {"James"}))
 
-    # main()
+    main()

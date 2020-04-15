@@ -46,13 +46,8 @@ class TestJointProbability(unittest.TestCase):
         )
         self.assertEqual(
             joint_probability(people, {"Lily"}, {"James"}, {"James"}),
-            0.0000147162015
+            0.00008411710164
         )
-        self.assertEqual(
-            joint_probability(people, {}, {"James", "Harry", "Lily"}, {"James"}),
-            0.0000147162015
-        )
-
 
 people = {
     'Harry': {'name': 'Harry', 'mother': 'Lily', 'father': 'James', 'trait': None},
