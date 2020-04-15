@@ -197,9 +197,3 @@ def MinValue(board):
         v = min(v, MaxValue(result(board, action)))
 
     return v
-
-print(minimax([
-    [EMPTY, EMPTY, EMPTY],
-    [O    , EMPTY, EMPTY],
-    [X    , EMPTY,     X]
-]))
