@@ -90,10 +90,10 @@ def winner(board):
             if board[col][row] == player_v:
                 num_in_row_v += 1
 
-        if num_in_row_h == 3:
+        if num_in_row_h == 3 and player_h != None:
             # Three in a row was found on horizontally
             return player_h
-        elif num_in_row_v == 3:
+        elif num_in_row_v == 3 and player_v != None:
             # Three in a row was found on vertically
             return player_v
 
@@ -107,10 +107,10 @@ def winner(board):
         if board[row][2 - col] == player_r:
             num_in_row_r += 1
 
-    if num_in_row_l == 3:
+    if num_in_row_l == 3 and player_l != None:
         # Three in a row was found on the left diagonal
         return player_l
-    elif num_in_row_r == 3:
+    elif num_in_row_r == 3 and player_r != None:
         # Three in a row was found on the right diagonal
         return player_r
 
@@ -150,24 +150,26 @@ def minimax(board):
     if terminal(board):
         return ()
 
+    min_value = 2
+    max_value = -2
+
+    # Tries to maximize score with X
     if current_player == "X":
-        max_value = -128
         for action in actions(board):
             optimal = MaxValue(result(board, action))
-            if optimal >= max_value:
+            if optimal > max_value:
                 optimal_action = action
                 max_value = optimal
 
+    # Tries to maximize score with O
     if current_player == "O":
-        min_value = 128
         for action in actions(board):
             optimal = MinValue(result(board, action))
-            if optimal <= min_value:
+            if optimal < min_value:
                 optimal_action = action
                 min_value = optimal
 
     return optimal_action
-
 
 def MaxValue(board):
     """
@@ -176,7 +178,7 @@ def MaxValue(board):
     if terminal(board):
         return utility(board)
 
-    v = -128
+    v = -2
     for action in actions(board):
         v = max(v, MinValue(result(board, action)))
 
@@ -190,8 +192,14 @@ def MinValue(board):
     if terminal(board):
         return utility(board)
 
-    v = 128
+    v = 2
     for action in actions(board):
         v = min(v, MaxValue(result(board, action)))
 
     return v
+
+print(minimax([
+    [EMPTY, EMPTY, EMPTY],
+    [O    , EMPTY, EMPTY],
+    [X    , EMPTY,     X]
+]))
