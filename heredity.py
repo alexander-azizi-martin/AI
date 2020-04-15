@@ -244,6 +244,7 @@ if __name__ == "__main__":
         'Lily': {'name': 'Lily', 'mother': None, 'father': None, 'trait': False}
     }
 
-    print(joint_probability(people, {"Harry"}, {"James"}, {"James"}))
+    # def joint_probability(people, one_gene, two_genes, have_trait):
+    #print(joint_probability(people, {"Harry"}, {"James"}, {"James"}))
 
     # main()
