@@ -157,7 +157,7 @@ def minimax(board):
     # Tries to maximize score with X
     if current_player == "X":
         for action in actions(board):
-            optimal = MaxValue(result(board, action), -INFINITY, INFINITY, 0)
+            optimal = MinValue(result(board, action), -INFINITY, INFINITY, 0)
             if optimal > max_value:
                 optimal_action = action
                 max_value = optimal
@@ -165,7 +165,7 @@ def minimax(board):
     # Tries to maximize score with O
     if current_player == "O":
         for action in actions(board):
-            optimal = MinValue(result(board, action), -INFINITY, INFINITY, 0)
+            optimal = MaxValue(result(board, action), -INFINITY, INFINITY, 0)
             if optimal < min_value:
                 optimal_action = action
                 min_value = optimal
