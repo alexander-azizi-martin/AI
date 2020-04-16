@@ -8,6 +8,7 @@ from copy import deepcopy
 X = "X"
 O = "O"
 EMPTY = None
+INFINITY = 32
 
 
 def initial_state():
@@ -150,13 +151,13 @@ def minimax(board):
     if terminal(board):
         return ()
 
-    min_value = 2
-    max_value = -2
+    min_value = INFINITY
+    max_value = -INFINITY
 
     # Tries to maximize score with X
     if current_player == "X":
         for action in actions(board):
-            optimal = MaxValue(result(board, action))
+            optimal = MaxValue(result(board, action), -INFINITY, INFINITY, 0)
             if optimal > max_value:
                 optimal_action = action
                 max_value = optimal
@@ -164,36 +165,42 @@ def minimax(board):
     # Tries to maximize score with O
     if current_player == "O":
         for action in actions(board):
-            optimal = MinValue(result(board, action))
+            optimal = MinValue(result(board, action), -INFINITY, INFINITY, 0)
             if optimal < min_value:
                 optimal_action = action
                 min_value = optimal
 
     return optimal_action
 
-def MaxValue(board):
+def MaxValue(board, alpha, beta, depth):
     """
     Returns the utility of an action for the X player.
     """
     if terminal(board):
         return utility(board)
 
-    v = -2
+    v = -INFINITY
     for action in actions(board):
-        v = max(v, MinValue(result(board, action)))
+        v = max(v, MinValue(result(board, action), alpha, beta, depth + 1))
+        alpha = max(alpha, v)
+        if alpha >= beta:
+            return alpha
 
     return v
 
 
-def MinValue(board):
+def MinValue(board, alpha, beta, depth):
     """
     Returns the utility of an action for the O player.
     """
     if terminal(board):
         return utility(board)
 
-    v = 2
+    v = INFINITY
     for action in actions(board):
-        v = min(v, MaxValue(result(board, action)))
+        v = min(v, MaxValue(result(board, action), alpha, beta, depth + 1))
+        beta = min(beta, v)
+        if alpha >= beta:
+            return beta
 
     return v
