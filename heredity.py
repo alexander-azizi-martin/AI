@@ -159,22 +159,21 @@ def joint_probability(people, one_gene, two_genes, have_trait):
 
         # Calculates the probability of a child
         else:
-            # Calculates the probability of the father pasing a gene
             if people[person]["father"] in two_genes:
                 dad_prob = 1 - PROBS["mutation"]
             elif people[person]["father"] in one_gene:
-                dad_prob = 0.5 * (1 - PROBS["mutation"])
+                dad_prob = 0.5
             else:
                 dad_prob = PROBS["mutation"]
 
             # Calculates the probability of the mother pasing a gene
             if people[person]["mother"] in two_genes:
                 mom_prob = 1 - PROBS["mutation"]
-            if people[person]["mother"] in one_gene:
-                mom_prob = 0.5 * (1 - PROBS["mutation"])
+            elif people[person]["mother"] in one_gene:
+                mom_prob = 0.5 
             else:
                 mom_prob = PROBS["mutation"]
-
+            
             # Calculates the probability of the child receiving num_genes genes
             if num_genes == 2:
                 probability *= mom_prob * dad_prob 
