@@ -172,6 +172,7 @@ def minimax(board):
 
     return optimal_action
 
+
 def MaxValue(board, alpha, beta, depth):
     """
     Returns the utility of an action for the X player.
