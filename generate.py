@@ -175,6 +175,7 @@ class CrosswordCreator():
         words = set()
 
         for variable in assignment:
+            # Checks if the word fits in the crossword and if the word repeats
             if assignment[variable] in words:
                 return False
             elif len(assignment[variable]) != variable.length:
@@ -182,6 +183,7 @@ class CrosswordCreator():
             else:
                 words.add(assignment[variable])
 
+            # Checks if there are conflicting characters
             for neighbor in self.crossword.neighbors(variable):
                 if neighbor in assignment:
                     (i, j) = self.crossword.overlaps[(variable, neighbor)]
@@ -199,6 +201,7 @@ class CrosswordCreator():
         """
         values = {}
 
+        # Counts how many times value affects the neighbor's domain
         for value in self.domains[var]:
             values[value] = 1
             for neighbor in self.crossword.neighbors(var):
@@ -208,6 +211,7 @@ class CrosswordCreator():
                         if value[i] != neighbor_value[j]:
                             values[value] += 1
 
+        # Returns sorted dictionary based on values
         return sorted(values, key=values.__getitem__)
 
     def select_unassigned_variable(self, assignment):
@@ -218,12 +222,14 @@ class CrosswordCreator():
         degree. If there is a tie, any of the tied variables are acceptable
         return values.
         """
+        # Checks if all variables are assigned
         if self.assignment_complete(assignment):
             return False
 
         unassigned_variables = self.crossword.variables.difference(assignment)
         variable = unassigned_variables.pop()
 
+        # Gets unassigned variable with the smallest domain
         for unassigned_variable in unassigned_variables:
             if len(self.domains[variable]) == len(self.domains[unassigned_variable]):
                 if len(self.crossword.neighbors(variable)) < \
