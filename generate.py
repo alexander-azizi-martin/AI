@@ -1,7 +1,6 @@
 import sys
 
-from operator import itemgetter
-from queue import Queue
+from queue import SimpleQueue
 from crossword import *
 
 
@@ -141,7 +140,7 @@ class CrosswordCreator():
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        queue = Queue()
+        queue = SimpleQueue()
 
         if arcs != None:
             for arc in arcs:
@@ -209,10 +208,7 @@ class CrosswordCreator():
                         if value[i] != neighbor_value[j]:
                             values[value] += 1
 
-        return [value[0] for value in sorted(values.items(), key=itemgetter(1))]
-
-        # return self.domains[var]
-        
+        return sorted(values, key=values.__getitem__)
 
     def select_unassigned_variable(self, assignment):
         """
