@@ -160,7 +160,7 @@ class NimAI():
 
         else:
             choice = actions.pop()
-            best_reward = 0
+            best_reward = self.get_q_value(state, choice)
             for action in Nim.available_actions(state):
                 reward = self.get_q_value(state, action)
                 if reward > best_reward:
