@@ -70,8 +70,6 @@ def load_data(data_dir):
             images.append(cv2.resize(img, (IMG_WIDTH, IMG_HEIGHT)))
             labels.append(category)
 
-        print(category)
-
     return (images, labels)
 
 
