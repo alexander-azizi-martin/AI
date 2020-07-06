@@ -16,6 +16,7 @@ def main():
 
     # Calculate IDF values across files
     files = load_files(sys.argv[1])
+    files = load_files("corpus")
     file_words = {
         filename: tokenize(files[filename])
         for filename in files
@@ -71,8 +72,7 @@ def tokenize(document):
     """
     words = []
 
-    for token in nltk.word_tokenize(document):
-        token = token.lower()
+    for token in nltk.word_tokenize(document.lower()):
         if token not in string.punctuation and token not in nltk.corpus.stopwords.words("english"):
             words.append(token)
 
@@ -93,7 +93,7 @@ def compute_idfs(documents):
     # Counts the number of documents a word is in
     for document_name in documents:
         for word in documents[document_name]:
-            # Only adds to the count if the word has not been seen in the document
+            # Only adds word if hasn't been seen in the document
             if word not in words_seen:
                 words_count[word] = words_count.get(word, 0) + 1
                 words_seen.add(word)
@@ -112,7 +112,7 @@ def top_files(query, files, idfs, n):
     """
     documents_score = {}
 
-    # Calculates each document score
+    # Calculates each document's score
     for document in files:
         documents_score[document] = 0
         for word in query:
@@ -121,15 +121,7 @@ def top_files(query, files, idfs, n):
                 documents_score[document] += idfs[word] * term_frequency
     
     # Gets the top n documents
-    top_documents = []
-    for (document, score) in sorted(documents_score.items(), key=lambda item: item[1], reverse=True):
-        if n > 0:
-            top_documents.append(document)
-            n -= 1
-        else:
-            break
-    
-    return top_documents
+    return sorted(documents_score, reverse=True, key=documents_score.get)[:n]
 
 
 def top_sentences(query, sentences, idfs, n):
@@ -142,23 +134,17 @@ def top_sentences(query, sentences, idfs, n):
     """
     sentences_score = {}
 
-    # Calculates each sentence score
+    # Calculates each sentence's score
     for sentence in sentences:
-        sentences_score[sentence] = 0
+        sentences_score[sentence] = [0, 0]
         for word in query :
             if word in sentences[sentence]:
-                sentences_score[sentence] += idfs[word] + (1 / len(sentences[sentence]))
+                # Adds to idf score and qtd score 
+                sentences_score[sentence][0] += idfs[word]
+                sentences_score[sentence][1] += 1 / len(sentences[sentence])
             
-    # Gets the top n sentence
-    top_sentences = []
-    for (sentence, score) in sorted(sentences_score.items(), key=lambda item: item[1], reverse=True):
-        if n > 0:
-            top_sentences.append(sentence)
-            n -= 1
-        else:
-            break
-    
-    return top_sentences
+    # Gets the top n sentences
+    return sorted(sentences_score, reverse=True, key=sentences_score.get)[:n]
 
 
 if __name__ == "__main__":
