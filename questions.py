@@ -11,12 +11,11 @@ SENTENCE_MATCHES = 1
 def main():
 
     # Check command-line arguments
-    # if len(sys.argv) != 2:
-    #     sys.exit("Usage: python questions.py corpus")
+    if len(sys.argv) != 2:
+        sys.exit("Usage: python questions.py corpus")
 
     # Calculate IDF values across files
-    #files = load_files(sys.argv[1])
-    files = load_files("corpus")
+    files = load_files(sys.argv[1])
     file_words = {
         filename: tokenize(files[filename])
         for filename in files
@@ -73,8 +72,9 @@ def tokenize(document):
     words = []
 
     for token in nltk.word_tokenize(document):
-        if token not in string.punctuation:
-            words.append(token.lower())
+        token = token.lower()
+        if token not in string.punctuation and token not in nltk.corpus.stopwords.words("english"):
+            words.append(token)
 
     return words
 
@@ -88,15 +88,16 @@ def compute_idfs(documents):
     resulting dictionary.
     """
     words_count = {}
+    words_seen = set()
 
     # Counts the number of documents a word is in
     for document_name in documents:
-        words_seen = set()
         for word in documents[document_name]:
             # Only adds to the count if the word has not been seen in the document
             if word not in words_seen:
                 words_count[word] = words_count.get(word, 0) + 1
                 words_seen.add(word)
+        words_seen.clear()
 
     # Calculates and returns IDF of each word
     return {word: math.log(len(documents) / words_count[word]) for word in words_count}
@@ -146,35 +147,16 @@ def top_sentences(query, sentences, idfs, n):
         sentences_score[sentence] = 0
         for word in query :
             if word in sentences[sentence]:
-                sentences_score[sentence] += idfs[word]
+                sentences_score[sentence] += idfs[word] + (1 / len(sentences[sentence]))
             
     # Gets the top n sentence
     top_sentences = []
-    sorted_sentences = sorted(sentences_score.items(), key=lambda item: item[1], reverse=True)
-    for i in range(n):
-        top_sentence, next_sentence = sorted_sentences[i], None
-        if i < len(sorted_sentences) - 1: 
-            next_sentence = sorted_sentences[i + 1]
-
-        while top_sentence[1] == next_sentence[1]:
-            query_term_density_top, query_term_density_next = 0, 0
-
-            for word in query:
-                if word in top_sentence[0]:
-                    query_term_density_top += (1 / len(sentences[top_sentence[0]]))
-                if word in next_sentence[0]:
-                    query_term_density_next += (1 / len(sentences[next_sentence[0]]))
-            
-            if query_term_density_top < query_term_density_next:
-                top_sentence = next_sentence
-
-            i += 1
-            if i < len(sorted_sentences) - 1: 
-                next_sentence = sorted_sentences[i + 1]
-            else:
-                break
-
-        top_sentences.append(top_sentence[0])
+    for (sentence, score) in sorted(sentences_score.items(), key=lambda item: item[1], reverse=True):
+        if n > 0:
+            top_sentences.append(sentence)
+            n -= 1
+        else:
+            break
     
     return top_sentences
 
