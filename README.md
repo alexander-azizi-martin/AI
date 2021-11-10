@@ -1,6 +1,6 @@
 # Pagerank
 
-An AI to rank web pages by importance based on Google's pagerank algorithm. The AI uses two methods to calculate the rank of a page: random surfer model, iterative algorithm. 
+An AI that ranks web pages by importance based on Google's pagerank algorithm. The AI uses two methods to calculate the rank of a page: random surfer model, iterative algorithm. 
 The random surger model considers the behavior of a hypothetical surfer on the internet who clicks on links at random while the iterative algorithm implements a recursive 
 mathematical expression to determine the page's rank.
 
