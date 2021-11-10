@@ -1,6 +1,6 @@
 # Knights
 
-A program to solve the three Knights and Knaves puzzles listed below using propositional logic. 
+A program that solves the three Knights and Knaves puzzles listed below using propositional logic. 
 
 In a Knights and Knaves puzzle, the following information is given: Each character is either a knight or a knave. 
 A knight will always tell the truth: if knight states a sentence, then that sentence is true. Conversely, a knave will always lie: 
