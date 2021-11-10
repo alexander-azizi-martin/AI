@@ -1,6 +1,6 @@
 # Traffic
 
-An AI that identifies which traffic signs appears in a photograph by using convolutional neural network.
+An AI that identifies which traffic signs appears in a photograph by using convolutional neural networks.
 
 ```
 $ python traffic.py gtsrb
